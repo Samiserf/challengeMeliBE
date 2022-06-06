@@ -73,7 +73,7 @@ const itemsDetailGet = (req, res = response) => {
           amount: item.price,
           decimals: "harcoded value",
         },
-        picture: item.thumbnail,
+        picture: item.pictures[0].url,
         condition: item.condition,
         // free_shipping: item.shipping.free_shipping,
         sold_quantity: item.sold_quantity,
