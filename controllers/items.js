@@ -6,8 +6,6 @@ const request = require("request-promise");
   Usado para : obtener categorias del breadcrumb dependiendo la cantidad que haya, maximo 5
 */
 const getBreadcrumb = (categories) => {
-  console.log("categories");
-  console.log(categories);
   const sortCategories = categories.sort((a, b) => {
     if (a.results < b.results) {
       return 1;
@@ -69,9 +67,6 @@ const itemsGet = (req, res = response) => {
       } else {
         categories = getBreadcrumb(res.filters[0].values[0].path_from_root);
       }
-
-      console.log("categories");
-      console.log(categories);
 
       return itemsArray.map((item) => {
         return {
