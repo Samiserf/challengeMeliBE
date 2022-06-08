@@ -1,19 +1,10 @@
 const { response } = require("express");
 const request = require("request-promise");
 
-async function getDataItems(uri) {
-  return new Promise(function (resolve, reject) {
-    request(uri, function (error, response) {
-      if (error) return reject(error);
-      try {
-        resolve(JSON.parse(response.body));
-      } catch (e) {
-        reject(e);
-      }
-    });
-  });
-}
-
+/* 
+  function: getBreadcrumb( data : array )
+  Usado para : obtener categorias del breadcrumb dependiendo la cantidad que haya, maximo 5
+*/
 const getBreadcrumb = (categories) => {
   console.log("categories");
   console.log(categories);
@@ -38,10 +29,31 @@ const getBreadcrumb = (categories) => {
   }
 };
 
+/* 
+  function: tranformToArrayString( data : array )
+  Usado para : transforma un array de objetos a array de string, se utiliza para formatear el breadcrumb
+*/
 const tranformToArrayString = (array) => {
   return array.map((current) => current.name);
 };
 
+async function getDataItems(uri) {
+  return new Promise(function (resolve, reject) {
+    request(uri, function (error, response) {
+      if (error) return reject(error);
+      try {
+        resolve(JSON.parse(response.body));
+      } catch (e) {
+        reject(e);
+      }
+    });
+  });
+}
+
+/* 
+  function: itemsGet(  )
+  Usado para : utilizado para devolver JSON que populara la vista de items buscados.
+*/
 const itemsGet = (req, res = response) => {
   const searchText = req.query.q || "";
 
@@ -52,11 +64,6 @@ const itemsGet = (req, res = response) => {
   respSeatchItems
     .then((res) => {
       const itemsArray = res.results.splice(1, 4);
-
-      /* 
-        function: getBreadcrumb( data : array )
-        Usado para : obtener categorias del breadcrumb dependiendo la cantidad que haya, maximo 5
-      */
       if (res.available_filters[0].id === "category") {
         categories = getBreadcrumb(res.available_filters[0].values);
       } else {
@@ -94,6 +101,11 @@ const itemsGet = (req, res = response) => {
     });
 };
 
+/* 
+  function: itemsGet(  )
+  Usado para : utilizado para devolver JSON que populara la vista del detalle en los productos.
+*/
+
 const itemsDetailGet = (req, res = response) => {
   const idItem = req.params.idItem;
 
@@ -111,7 +123,6 @@ const itemsDetailGet = (req, res = response) => {
       return {
         id: item.id,
         title: item.title,
-        // city_name: item.address.city_name,
         price: {
           currency: item.currency_id,
           amount: item.price,
@@ -119,7 +130,6 @@ const itemsDetailGet = (req, res = response) => {
         },
         picture: item.pictures[0].url,
         condition: item.condition,
-        // free_shipping: item.shipping.free_shipping,
         sold_quantity: item.sold_quantity,
       };
     })
