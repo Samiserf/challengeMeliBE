@@ -14,14 +14,58 @@ async function getDataItems(uri) {
   });
 }
 
+const getBreadcrumb = (categories) => {
+  console.log("categories");
+  console.log(categories);
+  const sortCategories = categories.sort((a, b) => {
+    if (a.results < b.results) {
+      return 1;
+    }
+    if (a.results > b.results) {
+      return -1;
+    }
+    // a must be equal to b
+    return 0;
+  });
+  if (sortCategories.length >= 5) {
+    return tranformToArrayString(sortCategories.splice(0, 5));
+  } else if (sortCategories.length === 0) {
+    return [""];
+  } else {
+    return tranformToArrayString(
+      sortCategories.splice(0, sortCategories.length)
+    );
+  }
+};
+
+const tranformToArrayString = (array) => {
+  return array.map((current) => current.name);
+};
+
 const itemsGet = (req, res = response) => {
   const searchText = req.query.q || "";
+
+  let categories = [];
   const respSeatchItems = getDataItems(
     `https://api.mercadolibre.com/sites/MLA/search?q=${searchText}`
   );
   respSeatchItems
     .then((res) => {
       const itemsArray = res.results.splice(1, 4);
+
+      /* 
+        function: getBreadcrumb( data : array )
+        Usado para : obtener categorias del breadcrumb dependiendo la cantidad que haya, maximo 5
+      */
+      if (res.available_filters[0].id === "category") {
+        categories = getBreadcrumb(res.available_filters[0].values);
+      } else {
+        categories = getBreadcrumb(res.filters[0].values[0].path_from_root);
+      }
+
+      console.log("categories");
+      console.log(categories);
+
       return itemsArray.map((item) => {
         return {
           id: item.id,
@@ -44,7 +88,7 @@ const itemsGet = (req, res = response) => {
           name: "Lucio",
           lastname: "Filetto",
         },
-        categories: ["1", "2", "3"],
+        categories: categories,
         items: items,
       });
     });
