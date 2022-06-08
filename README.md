@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Introduccion al proyecto
+=======
+# Introduccion al proyecto ChallengeMeliBE
+>>>>>>> f022cee8cbebf9bea32252222e3a23a620f25f72
 
 Este es un proyecto realizado para una prueba tecnica en Mercado libre.
 
